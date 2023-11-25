@@ -4,6 +4,7 @@ specifiers:
   '@types/chai': ^4.3.11
   '@types/mocha': ^10.0.6
   '@types/node': ^20.10.0
+  '@types/ramda': ^0.29.9
   chai: ^4.3.10
   mocha: ^10.2.0
   ramda: ^0.29.1
@@ -17,6 +18,7 @@ devDependencies:
   '@types/chai': 4.3.11
   '@types/mocha': 10.0.6
   '@types/node': 20.10.0
+  '@types/ramda': 0.29.9
   chai: 4.3.10
   mocha: 10.2.0
   ts-node: 10.9.1_ie2o6xc3cpqohpiihkx7k6pqsa
@@ -75,6 +77,12 @@ packages:
     resolution: {integrity: sha512-D0WfRmU9TQ8I9PFx9Yc+EBHw+vSpIub4IDvQivcp26PtPrdMGAq5SDcpXEo/epqa/DXotVpekHiLNTg3iaKXBQ==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
+
+  /@types/ramda/0.29.9:
+    resolution: {integrity: sha512-X3yEG6tQCWBcUAql+RPC/O1Hm9BSU+MXu2wJnCETuAgUlrEDwTA1kIOdEEE4YXDtf0zfQLHa9CCE7WYp9kqPIQ==}
+    dependencies:
+      types-ramda: 0.29.6
     dev: true
 
   /acorn-walk/8.3.0:
@@ -636,9 +644,19 @@ packages:
       yn: 3.1.1
     dev: true
 
+  /ts-toolbelt/9.6.0:
+    resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}
+    dev: true
+
   /type-detect/4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
     engines: {node: '>=4'}
+    dev: true
+
+  /types-ramda/0.29.6:
+    resolution: {integrity: sha512-VJoOk1uYNh9ZguGd3eZvqkdhD4hTGtnjRBUx5Zc0U9ftmnCgiWcSj/lsahzKunbiwRje1MxxNkEy1UdcXRCpYw==}
+    dependencies:
+      ts-toolbelt: 9.6.0
     dev: true
 
   /typescript/5.3.2:
