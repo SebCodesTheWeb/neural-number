@@ -1,6 +1,9 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { computeNextLayer } from './lib/compute-next-layer'
 import { join } from 'path'
+import { BP1 } from './lib/BP1'
+import { last } from 'ramda'
+import { BP4 } from './lib/BP4'
 
 type LayerConfig = {
   weights: number[][]
@@ -12,7 +15,14 @@ type NeuralNetworkConfig = {
   layerConfigs?: LayerConfig[] // Make layerConfigs optional
 }
 
+type NetworkGradient = {
+  weightGradients: number[][][]
+  biasGradients: number[][]
+}
+
 const normalizingFunction = (n: number) => 1 / (1 + Math.exp(-n))
+const derivativeOfNormalizingFunction = (n: number) =>
+  Math.exp(-n) / Math.pow(1 + Math.exp(-n), 2)
 
 export class NeuralNetwork {
   public layers: number[]
@@ -54,6 +64,49 @@ export class NeuralNetwork {
     })
   }
 
+  private forwardPassWithSavedActivations(input: number[]): {
+    activations: number[][]
+    zVectors: number[][]
+  } {
+    const activations = [input]
+    const zVectors: number[][] = []
+
+    let activation = input
+
+    for (const { weights, biases } of this.layerConfigs) {
+      const z = computeNextLayer(activation, weights, biases, (x) => x)
+      zVectors.push(z)
+      activation = z.map(normalizingFunction)
+      activations.push(activation)
+    }
+
+    return { activations, zVectors }
+  }
+
+  public backPropgataion(input: number[], expected: number[]): NetworkGradient {
+    let biasGradients: number[][] = []
+    let weightGradients: number[][][] = []
+
+    const { activations, zVectors } =
+      this.forwardPassWithSavedActivations(input)
+    const πVector = BP1(
+      last(activations) as number[],
+      expected,
+      derivativeOfNormalizingFunction,
+      last(zVectors) as number[]
+    )
+
+    const weightGradient = BP4(πVector, last(activations) as number[])
+
+    biasGradients.push(πVector)
+    weightGradients.push(weightGradient)
+
+    return {
+      biasGradients,
+      weightGradients,
+    }
+  }
+
   public forwardPass(input: number[], layerIndex = 0): number[] {
     if (layerIndex >= this.layerConfigs.length) {
       return input
@@ -68,5 +121,14 @@ export class NeuralNetwork {
     )
 
     return this.forwardPass(activation, layerIndex + 1)
+  }
+
+  private lossFunction(output: number[], expected: number[]): number {
+    return (
+      output.reduce(
+        (sum, outputVal, i) => sum + (outputVal - expected[i]) ** 2,
+        0
+      ) / output.length
+    )
   }
 }
