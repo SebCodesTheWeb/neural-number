@@ -4,6 +4,8 @@ import { join } from 'path'
 import { BP1 } from './lib/BP1'
 import { last } from 'ramda'
 import { BP4 } from './lib/BP4'
+import { BP2 } from './lib/BP2'
+import { vecAdd, matrixAdd } from './utils'
 
 type LayerConfig = {
   weights: number[][]
@@ -101,9 +103,38 @@ export class NeuralNetwork {
     biasGradients.push(πVector)
     weightGradients.push(weightGradient)
 
+    for (let i = this.layerConfigs.length - 1; i > 0; i -= 1) {
+      const { weights } = this.layerConfigs[i]
+      const newπVector = BP2(
+        weights,
+        πVector,
+        derivativeOfNormalizingFunction,
+        zVectors[i]
+      )
+      const newWeightGradient = BP4(newπVector, activations[i])
+
+      biasGradients.push(newπVector)
+      weightGradients.push(newWeightGradient)
+    }
+
     return {
       biasGradients,
       weightGradients,
+    }
+  }
+
+  public updateParameters(gradient: NetworkGradient, stepSize: number) {
+    for (let i = 0; i < this.layerConfigs.length; i += 1) {
+      this.layerConfigs[i].biases = vecAdd(
+        this.layerConfigs[i].biases,
+        gradient.biasGradients[i].map((bias) => -stepSize * bias)
+      )
+      this.layerConfigs[i].weights = matrixAdd(
+        this.layerConfigs[i].weights,
+        gradient.weightGradients[i].map((row) =>
+          row.map((weight) => -stepSize * weight)
+        )
+      )
     }
   }
 

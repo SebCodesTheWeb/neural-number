@@ -9,9 +9,8 @@ export const BP2 = (
   πVector: number[],
   normalizationFnDerivative: (n: number) => number,
   zVector: number[]
-) => {
+) =>
   hadamardProduct(
     vectorTransformation(πVector, transposeMatrix(weights)),
     zVector.map(normalizationFnDerivative)
   )
-}
