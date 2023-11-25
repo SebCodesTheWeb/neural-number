@@ -1,9 +1,15 @@
-
-import { NeuralNetwork } from "./neural-network";
+import { NeuralNetwork } from './neural-network'
+import { images } from './process-images'
 
 const cnn = new NeuralNetwork('./neural-network-config.json')
 
-const input = new Array(728).fill(0.5)
-const output = cnn.forwardPass(input)
+const output = cnn.forwardPass(images[0])
 
-console.log({output})
+const indexOfMaxValue = output.reduce(
+  (bestIndexSoFar, currentValue, currentIndex, array) => {
+    return currentValue > array[bestIndexSoFar] ? currentIndex : bestIndexSoFar
+  },
+  0
+)
+
+console.log(indexOfMaxValue)

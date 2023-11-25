@@ -23,5 +23,4 @@ function readImages(filePath: string): number[][] {
 
 const imagesPath: string = path.join(__dirname, 'archive/train-images-idx3-ubyte/train-images-idx3-ubyte');
 
-const images: number[][] = readImages(imagesPath);
-console.log(images[0])
+export const images: number[][] = readImages(imagesPath);
