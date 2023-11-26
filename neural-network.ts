@@ -154,6 +154,7 @@ export class NeuralNetwork {
     return this.forwardPass(activation, layerIndex + 1)
   }
 
+  // uses 1/2n sum (a-y)^2
   private lossFunction(output: number[], expected: number[]): number {
     return (
       output.reduce(
