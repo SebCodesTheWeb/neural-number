@@ -1,7 +1,6 @@
-import {
-  matrixMultiplication,
-  transposeMatrix,
-} from '../utils'
+import { scalarMultiplication, transposeVector } from '../utils'
 
 export const BP4 = (πVector: number[], activation: number[]): number[][] =>
-  matrixMultiplication([πVector], transposeMatrix([activation]))
+  transposeVector(activation).map((vec) =>
+    scalarMultiplication(πVector, vec[0])
+  )
