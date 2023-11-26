@@ -14,7 +14,7 @@ type LayerConfig = {
 
 type NeuralNetworkConfig = {
   layers: number[]
-  layerConfigs?: LayerConfig[] // Make layerConfigs optional
+  layerConfigs?: LayerConfig[]
 }
 
 type NetworkGradient = {
@@ -66,7 +66,7 @@ export class NeuralNetwork {
     })
   }
 
-  private forwardPassWithSavedActivations(input: number[]): {
+  public forwardPassWithSavedActivations(input: number[]): {
     activations: number[][]
     zVectors: number[][]
   } {
