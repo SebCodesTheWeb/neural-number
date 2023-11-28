@@ -98,7 +98,7 @@ export class NeuralNetwork {
       last(zVectors) as number[]
     )
 
-    const weightGradient = BP4(πVector, last(activations) as number[])
+    const weightGradient = BP4(πVector, activations[activations.length - 2])
 
     biasGradients.push(πVector)
     weightGradients.push(weightGradient)
