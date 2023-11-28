@@ -123,6 +123,57 @@ export class NeuralNetwork {
     }
   }
 
+  public getAverageGradient(
+    inputSet: number[][],
+    expectedSet: number[][],
+  ) {
+    if (inputSet.length !== expectedSet.length) {
+      throw new Error('Input and expected sets should be of the same size.')
+    }
+
+    const initialAccumulator: NetworkGradient = {
+      biasGradients: this.layerConfigs.map((layer) =>
+        new Array(layer.biases.length).fill(0)
+      ),
+      weightGradients: this.layerConfigs.map((layer) =>
+        layer.weights.map((row) => new Array(row.length).fill(0))
+      ),
+    }
+
+    const accumulatedGradients = inputSet.reduce(
+      (accumulator, input, sampleIndex) => {
+        const expected = expectedSet[sampleIndex]
+        const gradients = this.backPropgataion(input, expected)
+
+        return {
+          biasGradients: accumulator.biasGradients.map(
+            (biasGradient, layerIndex) =>
+              vecAdd(biasGradient, gradients.biasGradients[layerIndex])
+          ),
+          weightGradients: accumulator.weightGradients.map(
+            (weightGradient, layerIndex) =>
+              matrixAdd(weightGradient, gradients.weightGradients[layerIndex])
+          ),
+        }
+      },
+      initialAccumulator
+    )
+
+    const averageGradients: NetworkGradient = {
+      biasGradients: accumulatedGradients.biasGradients.map((biasArray) =>
+        biasArray.map((bias) => bias / inputSet.length)
+      ),
+      weightGradients: accumulatedGradients.weightGradients.map(
+        (weightMatrix) =>
+          weightMatrix.map((weightArray) =>
+            weightArray.map((weight) => weight / inputSet.length)
+          )
+      ),
+    }
+
+    return averageGradients
+  }
+
   public updateParameters(gradient: NetworkGradient, stepSize: number) {
     for (let i = 0; i < this.layerConfigs.length; i += 1) {
       this.layerConfigs[i].biases = vecAdd(
