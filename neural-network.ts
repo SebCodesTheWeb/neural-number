@@ -117,58 +117,76 @@ export class NeuralNetwork {
       weightGradients.push(newWeightGradient)
     }
 
+    console.log(
+      'Backpropagated weight gradients:',
+      weightGradients.map((layer) => layer.map((row) => row.length))
+    )
+
     return {
       biasGradients,
       weightGradients,
     }
   }
 
-  public getAverageGradient(
-    inputSet: number[][],
-    expectedSet: number[][],
-  ) {
+  public getAverageGradient(inputSet: number[][], expectedSet: number[][]) {
+    // Ensure that inputSet and expectedSet are of the same length
     if (inputSet.length !== expectedSet.length) {
       throw new Error('Input and expected sets should be of the same size.')
     }
 
-    const initialAccumulator: NetworkGradient = {
-      biasGradients: this.layerConfigs.map((layer) =>
-        new Array(layer.biases.length).fill(0)
-      ),
-      weightGradients: this.layerConfigs.map((layer) =>
-        layer.weights.map((row) => new Array(row.length).fill(0))
-      ),
-    }
-
-    const accumulatedGradients = inputSet.reduce(
-      (accumulator, input, sampleIndex) => {
-        const expected = expectedSet[sampleIndex]
-        const gradients = this.backPropgataion(input, expected)
-
-        return {
-          biasGradients: accumulator.biasGradients.map(
-            (biasGradient, layerIndex) =>
-              vecAdd(biasGradient, gradients.biasGradients[layerIndex])
-          ),
-          weightGradients: accumulator.weightGradients.map(
-            (weightGradient, layerIndex) =>
-              matrixAdd(weightGradient, gradients.weightGradients[layerIndex])
-          ),
-        }
-      },
-      initialAccumulator
+    // Initialize accumulators for gradients
+    let biasGradientSum = this.layerConfigs.map((layer) =>
+      new Array(layer.biases.length).fill(0)
+    )
+    let weightGradientSum = this.layerConfigs.map((layer) =>
+      layer.weights.map((row) => new Array(row.length).fill(0))
     )
 
-    const averageGradients: NetworkGradient = {
-      biasGradients: accumulatedGradients.biasGradients.map((biasArray) =>
-        biasArray.map((bias) => bias / inputSet.length)
-      ),
-      weightGradients: accumulatedGradients.weightGradients.map(
-        (weightMatrix) =>
-          weightMatrix.map((weightArray) =>
-            weightArray.map((weight) => weight / inputSet.length)
-          )
-      ),
+    console.log(
+      'Initial weight gradient accumulator:',
+      weightGradientSum.map((layer) => layer.map((row) => row.length))
+    )
+
+    // Sum gradients for each training example
+    for (let sampleIndex = 0; sampleIndex < inputSet.length; sampleIndex++) {
+      const input = inputSet[sampleIndex]
+      const expected = expectedSet[sampleIndex]
+      const gradients = this.backPropgataion(input, expected)
+
+      // Accumulate the gradients
+      for (let i = 0; i < biasGradientSum.length; i++) {
+        biasGradientSum[i] = vecAdd(
+          biasGradientSum[i],
+          gradients.biasGradients[i]
+        )
+        console.log(`Adding gradients for layer ${i}:`)
+        console.log(
+          `Accumulator shape: ${weightGradientSum[i].length}x${weightGradientSum[i][0].length}`
+        )
+        console.log(
+          `Gradient shape: ${gradients.weightGradients[i].length}x${gradients.weightGradients[i][0].length}`
+        )
+        weightGradientSum[i] = matrixAdd(
+          weightGradientSum[i],
+          gradients.weightGradients[i]
+        )
+      }
+    }
+
+    // Compute the average of the accumulated gradients
+    let biasGradientsAverage = biasGradientSum.map((biases) =>
+      biases.map((bias) => bias / inputSet.length)
+    )
+    let weightGradientsAverage = weightGradientSum.map((weights) =>
+      weights.map((weightRow) =>
+        weightRow.map((weight) => weight / inputSet.length)
+      )
+    )
+
+    // Construct the average gradients object
+    let averageGradients: NetworkGradient = {
+      biasGradients: biasGradientsAverage,
+      weightGradients: weightGradientsAverage,
     }
 
     return averageGradients

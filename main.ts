@@ -1,19 +1,29 @@
 import { NeuralNetwork } from './neural-network'
 import { images } from './process-images'
+import { expected } from './process-labels'
+import { shuffleArray } from './utils/shuffle-array'
 
 const cnn = new NeuralNetwork('./neural-network-config.json')
+cnn.saveNetworkConfig('./neural-network-config.json')
 
-const gradient = cnn.backPropgataion(images[0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-cnn.updateParameters(gradient, 0.01)
-cnn.saveNetworkConfig
+function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
+  for (let epoch = 0; epoch < nbrEpochs; epoch++) {
+    const shuffledIndices = images.map((_, idx) => idx)
+    shuffleArray(shuffledIndices)
 
-// const output = cnn.forwardPass(images[0])
+    for (let i = 0; i < images.length; i += miniBatchSize) {
+      const miniBatchIndices = shuffledIndices.slice(i, i + miniBatchSize)
+      const miniBatchImages = miniBatchIndices.map((index) => images[index])
+      const miniBatchLabels = miniBatchIndices.map((index) => expected[index])
 
-// const indexOfMaxValue = output.reduce(
-//   (bestIndexSoFar, currentValue, currentIndex, array) => {
-//     return currentValue > array[bestIndexSoFar] ? currentIndex : bestIndexSoFar
-//   },
-//   0
-// )
+      const averageGradient = cnn.getAverageGradient(
+        miniBatchImages,
+        miniBatchLabels
+      )
 
-// console.log(indexOfMaxValue)
+      cnn.updateParameters(averageGradient, stepSize)
+    }
+  }
+}
+
+train(1, 1, 1)
