@@ -111,6 +111,8 @@ export class NeuralNetwork {
         derivativeOfNormalizingFunction,
         zVectors[i]
       )
+
+      console.log({newπVector})
       const newWeightGradient = BP4(newπVector, activations[i])
 
       biasGradients.push(newπVector)
@@ -129,12 +131,10 @@ export class NeuralNetwork {
   }
 
   public getAverageGradient(inputSet: number[][], expectedSet: number[][]) {
-    // Ensure that inputSet and expectedSet are of the same length
     if (inputSet.length !== expectedSet.length) {
       throw new Error('Input and expected sets should be of the same size.')
     }
 
-    // Initialize accumulators for gradients
     let biasGradientSum = this.layerConfigs.map((layer) =>
       new Array(layer.biases.length).fill(0)
     )
@@ -142,29 +142,18 @@ export class NeuralNetwork {
       layer.weights.map((row) => new Array(row.length).fill(0))
     )
 
-    console.log(
-      'Initial weight gradient accumulator:',
-      weightGradientSum.map((layer) => layer.map((row) => row.length))
-    )
-
-    // Sum gradients for each training example
     for (let sampleIndex = 0; sampleIndex < inputSet.length; sampleIndex++) {
       const input = inputSet[sampleIndex]
       const expected = expectedSet[sampleIndex]
       const gradients = this.backPropgataion(input, expected)
 
-      // Accumulate the gradients
+
+      console.log('weightShape', `${weightGradientSum[0].length}x${weightGradientSum[0][0].length}`)
+      console.log('weightShape2', `${gradients.weightGradients[0].length}x${gradients.weightGradients[0][0].length}`)
       for (let i = 0; i < biasGradientSum.length; i++) {
         biasGradientSum[i] = vecAdd(
           biasGradientSum[i],
           gradients.biasGradients[i]
-        )
-        console.log(`Adding gradients for layer ${i}:`)
-        console.log(
-          `Accumulator shape: ${weightGradientSum[i].length}x${weightGradientSum[i][0].length}`
-        )
-        console.log(
-          `Gradient shape: ${gradients.weightGradients[i].length}x${gradients.weightGradients[i][0].length}`
         )
         weightGradientSum[i] = matrixAdd(
           weightGradientSum[i],
@@ -173,7 +162,6 @@ export class NeuralNetwork {
       }
     }
 
-    // Compute the average of the accumulated gradients
     let biasGradientsAverage = biasGradientSum.map((biases) =>
       biases.map((bias) => bias / inputSet.length)
     )
@@ -183,7 +171,6 @@ export class NeuralNetwork {
       )
     )
 
-    // Construct the average gradients object
     let averageGradients: NetworkGradient = {
       biasGradients: biasGradientsAverage,
       weightGradients: weightGradientsAverage,
