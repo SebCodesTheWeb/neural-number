@@ -29,4 +29,9 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
   cnn.saveNetworkConfig('./neural-network-config.json')
 }
 
-train(5, 20, 10)
+// optimal: 100, 80, 7
+
+const t1 = performance.now()
+train(100, 80, 7)
+const t2 = performance.now()
+console.log(`Process finished, exited in ${t2 - t1}ms`)
