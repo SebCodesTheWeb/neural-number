@@ -8,10 +8,12 @@ cnn.saveNetworkConfig('./neural-network-config.json')
 
 function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
   for (let epoch = 0; epoch < nbrEpochs; epoch++) {
+    console.log("epoch: ", epoch)
     const shuffledIndices = images.map((_, idx) => idx)
     shuffleArray(shuffledIndices)
 
-    for (let i = 0; i < 10; i += miniBatchSize) {
+    for (let i = 0; i < images.length; i += miniBatchSize) {
+      console.log("miniBatch: ", i / miniBatchSize)
       const miniBatchIndices = shuffledIndices.slice(i, i + miniBatchSize)
       const miniBatchImages = miniBatchIndices.map((index) => images[index])
       const miniBatchLabels = miniBatchIndices.map((index) => expected[index])
@@ -27,4 +29,4 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
   cnn.saveNetworkConfig('./neural-network-config.json')
 }
 
-train(1, 1, 1)
+train(5, 20, 10)
