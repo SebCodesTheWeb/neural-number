@@ -11,7 +11,7 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
     const shuffledIndices = images.map((_, idx) => idx)
     shuffleArray(shuffledIndices)
 
-    for (let i = 0; i < images.length; i += miniBatchSize) {
+    for (let i = 0; i < 10; i += miniBatchSize) {
       const miniBatchIndices = shuffledIndices.slice(i, i + miniBatchSize)
       const miniBatchImages = miniBatchIndices.map((index) => images[index])
       const miniBatchLabels = miniBatchIndices.map((index) => expected[index])
@@ -24,6 +24,7 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
       cnn.updateParameters(averageGradient, stepSize)
     }
   }
+  cnn.saveNetworkConfig('./neural-network-config.json')
 }
 
 train(1, 1, 1)

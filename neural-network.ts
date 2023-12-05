@@ -42,8 +42,8 @@ export class NeuralNetwork {
 
   private initializeNetwork() {
     this.layerConfigs = this.layers.slice(1).map((layerSize, index) => ({
-      weights: Array.from({ length: layerSize }, () =>
-        Array.from({ length: this.layers[index] }, Math.random)
+      weights: Array.from({ length: this.layers[index] }, () =>
+        Array.from({ length: layerSize }, Math.random)
       ),
       biases: Array.from({ length: layerSize }, Math.random),
     }))
@@ -91,12 +91,14 @@ export class NeuralNetwork {
 
     const { activations, zVectors } =
       this.forwardPassWithSavedActivations(input)
+
     const πVector = BP1(
-      last(activations) as number[],
+      activations[activations.length - 1],
       expected,
       derivativeOfNormalizingFunction,
-      last(zVectors) as number[]
+      zVectors[zVectors.length - 1]
     )
+
 
     const weightGradient = BP4(πVector, activations[activations.length - 2])
 
@@ -105,24 +107,19 @@ export class NeuralNetwork {
 
     for (let i = this.layerConfigs.length - 1; i > 0; i -= 1) {
       const { weights } = this.layerConfigs[i]
+
       const newπVector = BP2(
         weights,
         πVector,
         derivativeOfNormalizingFunction,
-        zVectors[i]
+        zVectors[i - 1]
       )
 
-      console.log({newπVector})
-      const newWeightGradient = BP4(newπVector, activations[i])
+      const newWeightGradient = BP4(newπVector, activations[i - 1])
 
-      biasGradients.push(newπVector)
-      weightGradients.push(newWeightGradient)
+      biasGradients.unshift(newπVector)
+      weightGradients.unshift(newWeightGradient)
     }
-
-    console.log(
-      'Backpropagated weight gradients:',
-      weightGradients.map((layer) => layer.map((row) => row.length))
-    )
 
     return {
       biasGradients,
@@ -147,14 +144,12 @@ export class NeuralNetwork {
       const expected = expectedSet[sampleIndex]
       const gradients = this.backPropgataion(input, expected)
 
-
-      console.log('weightShape', `${weightGradientSum[0].length}x${weightGradientSum[0][0].length}`)
-      console.log('weightShape2', `${gradients.weightGradients[0].length}x${gradients.weightGradients[0][0].length}`)
       for (let i = 0; i < biasGradientSum.length; i++) {
         biasGradientSum[i] = vecAdd(
           biasGradientSum[i],
           gradients.biasGradients[i]
         )
+
         weightGradientSum[i] = matrixAdd(
           weightGradientSum[i],
           gradients.weightGradients[i]
@@ -171,20 +166,22 @@ export class NeuralNetwork {
       )
     )
 
-    let averageGradients: NetworkGradient = {
+    const averageGradient: NetworkGradient = {
       biasGradients: biasGradientsAverage,
       weightGradients: weightGradientsAverage,
     }
 
-    return averageGradients
+    return averageGradient
   }
 
   public updateParameters(gradient: NetworkGradient, stepSize: number) {
     for (let i = 0; i < this.layerConfigs.length; i += 1) {
+
       this.layerConfigs[i].biases = vecAdd(
         this.layerConfigs[i].biases,
         gradient.biasGradients[i].map((bias) => -stepSize * bias)
       )
+
       this.layerConfigs[i].weights = matrixAdd(
         this.layerConfigs[i].weights,
         gradient.weightGradients[i].map((row) =>

@@ -1,7 +1,16 @@
-export const transposeMatrix = (matrix: number[][]) => {
-  const turnedMatrix = matrix.map((_, index) =>
-    matrix.flatMap((vec) => vec[index])
-  )
+export const transposeMatrix = (matrix: number[][]): number[][] => {
+  const rows = matrix.length
+  const cols = matrix.reduce((max, row) => Math.max(max, row.length), 0)
+  const transposed = new Array(cols)
 
-  return turnedMatrix
+  for (let i = 0; i < cols; i++) {
+    transposed[i] = new Array(rows)
+    for (let j = 0; j < rows; j++) {
+      if (matrix[j][i] !== undefined) {
+        transposed[i][j] = matrix[j][i]
+      }
+    }
+  }
+
+  return transposed
 }

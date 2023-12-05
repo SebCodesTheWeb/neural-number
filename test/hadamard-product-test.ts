@@ -15,4 +15,10 @@ describe('hadamardProduct', () => {
     const productTwo = hadamardProduct(vec2, vec1)
     expect(productOne).to.deep.equal(productTwo)
   })
+  it('handles undefined entries', () => {
+    const vec1 = [1, 2, 3]
+    const vec2 = [2, 9]
+    const product = hadamardProduct(vec1, vec2)
+    expect(product).to.deep.equal([2, 18, 0])
+  })
 })
