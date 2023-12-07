@@ -30,7 +30,7 @@ function readImages(filePath: string): number[][] {
   return images;
 }
 
-const imagesPath: string = path.join(__dirname, 'archive/t10k-images-idx3-ubyte/t10k-images-idx3-ubyte');
+const imagesPath: string = path.join(__dirname, 'archive/train-images-idx3-ubyte/train-images-idx3-ubyte');
 
 export const images: number[][] = readImages(imagesPath);
 
@@ -53,8 +53,11 @@ function printImage(image: number[], rows: number, columns: number) {
   }
 }
 
+// images.reduce((acc, curr))
+
 if (images.length > 0) {
-  const firstImage = images[0];
+  const firstImage = images[2];
+  // console.log(JSON.stringify(firstImage))
   const rows = 28; 
   const columns = 28; 
   

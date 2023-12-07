@@ -43,9 +43,9 @@ export class NeuralNetwork {
   private initializeNetwork() {
     this.layerConfigs = this.layers.slice(1).map((layerSize, index) => ({
       weights: Array.from({ length: this.layers[index] }, () =>
-        Array.from({ length: layerSize }, Math.random)
+        Array.from({ length: layerSize }, () =>  (Math.random() - 0.5)/10000 )
       ),
-      biases: Array.from({ length: layerSize }, Math.random),
+      biases: Array.from({ length: layerSize }, () => (Math.random() - 0.5 )/10000),
     }))
   }
 
@@ -82,6 +82,8 @@ export class NeuralNetwork {
       activations.push(activation)
     }
 
+
+
     return { activations, zVectors }
   }
 
@@ -92,13 +94,16 @@ export class NeuralNetwork {
     const { activations, zVectors } =
       this.forwardPassWithSavedActivations(input)
 
+    console.log(
+      this.lossFunction(activations[activations.length - 1], expected)
+      )
+
     const πVector = BP1(
       activations[activations.length - 1],
       expected,
       derivativeOfNormalizingFunction,
       zVectors[zVectors.length - 1]
     )
-
 
     const weightGradient = BP4(πVector, activations[activations.length - 2])
 

@@ -23,7 +23,7 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
         miniBatchLabels
       )
 
-      console.log("here", averageGradient.weightGradients[0])
+      // console.log("here", averageGradient.weightGradients[0])
 
       cnn.updateParameters(averageGradient, stepSize)
       cnn.saveNetworkConfig('./neural-network-config.json')
@@ -33,6 +33,6 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
 
 // optimal: 100, 80, 7
 // const t1 = performance.now()
-train(5, 80, 10000)
+train(5, 80, 1)
 // const t2 = performance.now()
 // console.log(`Process finished, exited in ${t2 - t1}ms`)
