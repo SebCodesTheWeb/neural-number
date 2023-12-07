@@ -30,7 +30,7 @@ function readImages(filePath: string): number[][] {
   return images;
 }
 
-const imagesPath: string = path.join(__dirname, 'archive/train-images-idx3-ubyte/train-images-idx3-ubyte');
+const imagesPath: string = path.join(__dirname, 'archive/t10k-images-idx3-ubyte/t10k-images-idx3-ubyte');
 
 export const images: number[][] = readImages(imagesPath);
 
@@ -42,22 +42,22 @@ export const images: number[][] = readImages(imagesPath);
 //   }
 // })
 
-// function printImage(image: number[], rows: number, columns: number) {
-//   for (let i = 0; i < rows; i++) {
-//     let row = '';
-//     for (let j = 0; j < columns; j++) {
-//       const pixelValue = image[i * columns + j];
-//       row += pixelValue > 0.5 ? '██' : '  ';
-//     }
-//     console.log(row);
-//   }
-// }
+function printImage(image: number[], rows: number, columns: number) {
+  for (let i = 0; i < rows; i++) {
+    let row = '';
+    for (let j = 0; j < columns; j++) {
+      const pixelValue = image[i * columns + j];
+      row += pixelValue > 0.5 ? '██' : '  ';
+    }
+    console.log(row);
+  }
+}
 
-// if (images.length > 0) {
-//   const firstImage = images[0];
-//   const rows = 28; 
-//   const columns = 28; 
+if (images.length > 0) {
+  const firstImage = images[0];
+  const rows = 28; 
+  const columns = 28; 
   
-//   console.log('First image:');
-//   printImage(firstImage, rows, columns);
-// }
+  console.log('First image:');
+  printImage(firstImage, rows, columns);
+}

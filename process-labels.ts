@@ -17,9 +17,15 @@ function readLabels(filePath: string): number[][] {
   return labels
 }
 
-const labelsPath: string = path.join(
+const testingLabelsPath: string = path.join(
+  __dirname,
+  'archive/t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte'
+)
+
+const trainingLabelsPath: string = path.join(
   __dirname,
   'archive/train-labels-idx1-ubyte/train-labels-idx1-ubyte'
 )
 
-export const expected: number[][] = readLabels(labelsPath)
+export const trainExpected: number[][] = readLabels(trainingLabelsPath)
+export const testExpected: number[][] = readLabels(testingLabelsPath)
