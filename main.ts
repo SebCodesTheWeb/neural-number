@@ -33,6 +33,6 @@ function train(nbrEpochs: number, miniBatchSize: number, stepSize: number) {
 
 // optimal: 100, 80, 7
 // const t1 = performance.now()
-train(5, 80, 1)
+train(5, 80, 5)
 // const t2 = performance.now()
 // console.log(`Process finished, exited in ${t2 - t1}ms`)
